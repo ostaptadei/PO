@@ -1,66 +1,58 @@
-import LoginPage from '../../src/pageobjects/login.page'
-import mainPage from '../../src/pageobjects/main.page'
 import inputs from '../../src/utils/inputs'
 import { expect as chaiExpect } from 'chai'
 import { config } from '../../wdio.conf'
-import workShiftPage from '../../src/pageobjects/workShift.page'
+import { LoginPage, MainPage, WorkShiftPage } from '../..'
+
+const workShiftPage = new WorkShiftPage()
+const mainPage = new MainPage()
+const loginPage = new LoginPage()
 
 describe('Add new record, check its presence and delete', () => {
   before('Should open login page and login', async () => {
-    await LoginPage.open()
-    await LoginPage.login(inputs.username, inputs.password)
+    await loginPage.open()
+    await loginPage.login(inputs.username, inputs.password)
   })
 
   it('Should redirect to dashboard page', async () => {
     const currentUrl = await browser.getUrl()
-    return await chaiExpect(currentUrl).to.be.equal(
-      config.baseUrl + inputs.dashBoardUrl
-    )
+    chaiExpect(currentUrl).to.be.equal(config.baseUrl + inputs.dashBoardUrl)
   })
 
   it('Should go to WorkShift page', async () => {
-    const goToWorkShiftResult = await mainPage.goToWorkShift()
-    return chaiExpect(goToWorkShiftResult).to.be.equal(true)
+    await mainPage.goToWorkShift()
+    const customerListIsPresent = await workShiftPage.customerList.isDisplayed()
+    chaiExpect(customerListIsPresent).to.be.equal(true)
   })
 
   it('Should show workShift page', async () => {
     const currentUrl = await browser.getUrl()
-    return await chaiExpect(currentUrl).to.be.equal(
-      config.baseUrl + inputs.workShiftUrl
-    )
+    chaiExpect(currentUrl).to.be.equal(config.baseUrl + inputs.workShiftUrl)
   })
 
   it('Should add new Shift', async () => {
-    const addNewShiftResult = await workShiftPage.addNewShift(
+    const shiftRowsNumberPrimary = await workShiftPage.shiftRows.length
+    workShiftPage.addNewShift(
       inputs.shiftName,
       inputs.hoursFrom,
       inputs.hoursTo
     )
-    return chaiExpect(addNewShiftResult).to.be.equal(true)
+    const shiftRowsNumberFinally = await workShiftPage.shiftRows.length
+    chaiExpect(shiftRowsNumberFinally).to.be.equal(shiftRowsNumberPrimary)
   })
 
   it('Should find new Shift', async () => {
-    const findNewShiftResult = await workShiftPage.findNewShift(
+    await workShiftPage.findNewShift(
       inputs.shiftName,
       inputs.hoursFrom,
       inputs.hoursTo
     )
-    return chaiExpect(findNewShiftResult).to.equal(true)
+    const newShiftNameIsPresent = await workShiftPage.shiftName.isDisplayed()
+    chaiExpect(newShiftNameIsPresent).to.equal(true)
   })
 
-  it('Should delete new Shift', async () => {
-    const deleteNewShiftResult = await workShiftPage.deleteNewShift(
-      inputs.shiftName
-    )
-    return chaiExpect(deleteNewShiftResult).to.be.equal(true)
-  })
-
-  it('Should make sure field is deleted', async () => {
-    const findNewShiftResult = await workShiftPage.findNewShift(
-      inputs.shiftName,
-      inputs.hoursFrom,
-      inputs.hoursTo
-    )
-    chaiExpect(findNewShiftResult).to.be.equal(false)
+  it('Should delete new Shift and make sure field is deleted', async () => {
+    await workShiftPage.deleteNewShift(inputs.shiftName)
+    const deleteNewShiftResult = await workShiftPage.shiftName.isDisplayed()
+    chaiExpect(deleteNewShiftResult).to.be.equal(false)
   })
 })

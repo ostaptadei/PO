@@ -1,80 +1,80 @@
-import { expect as chaiExpect } from 'chai'
+import { LoginPage, MainPage, WorkShiftPage } from '..'
 
-async function logIn(username: string, password: string): Promise<boolean> {
-  try {
-    await this.inputUsername.addValue(username)
-    await this.inputPassword.addValue(password)
-    await this.btnSubmit.click()
-    return true
-  } catch (err) {
-    return false
-  }
+export async function logIn(
+  page: LoginPage,
+  username: string,
+  password: string
+): Promise<void> {
+  await page.inputUsername.waitForDisplayed({ timeout: 3000 })
+  await page.inputUsername.addValue(username)
+  await page.inputPassword.waitForDisplayed({ timeout: 3000 })
+  await page.inputPassword.addValue(password)
+  await page.inputPassword.waitForClickable({ timeout: 2000 })
+  await page.btnSubmit.click()
 }
 
-async function redirectToWorkShift(): Promise<boolean> {
-  try {
-    await this.adminTab.moveTo()
-    await this.jobTab.moveTo()
-    await this.workShiftTab.click()
-    return true
-  } catch (err) {
-    return false
-  }
+export async function redirectToWorkShift(page: MainPage): Promise<void> {
+  await page.adminTab.waitForDisplayed({ timeout: 3000 })
+  await page.adminTab.moveTo()
+  await page.jobTab.waitForDisplayed({ timeout: 3000 })
+  await page.jobTab.moveTo()
+  await page.workShiftTab.waitForClickable({ timeout: 2000 })
+  await page.workShiftTab.click()
 }
 
-async function addShift(
+export async function addShift(
+  page: WorkShiftPage,
   shiftName: string,
   hoursFrom: string,
   hoursTo: string
-): Promise<boolean> {
-  try {
-    await this.btnAdd.click()
-    await this.employeesList.click()
-    await this.btnAssing.click()
-    await this.timePickerFrom.addValue(hoursFrom)
-    await this.timePickerTo.addValue(hoursTo)
-    await this.input.addValue(shiftName)
-    await this.btnSave.click()
-    return true
-  } catch (err) {
-    return false
-  }
+): Promise<void> {
+  await page.btnAdd.waitForClickable({ timeout: 2000 })
+  await page.btnAdd.click()
+
+  await page.employeesList.waitForDisplayed({ timeout: 3000 })
+  await page.employeesList.click()
+
+  await page.btnAssing.waitForClickable({ timeout: 2000 })
+  await page.btnAssing.click()
+
+  await page.timePickerFrom.waitForDisplayed({ timeout: 3000 })
+  await page.timePickerFrom.addValue(hoursFrom)
+
+  await page.timePickerTo.waitForDisplayed({ timeout: 3000 })
+  await page.timePickerTo.addValue(hoursTo)
+
+  await page.input.waitForDisplayed({ timeout: 3000 })
+  await page.input.addValue(shiftName)
+
+  await page.btnSave.waitForClickable({ timeout: 2000 })
+  await page.btnSave.click()
 }
 
-async function findShift(
+export async function findShift(
+  page: WorkShiftPage,
   shiftName: string,
   hoursFrom: string,
   hoursTo: string
-): Promise<boolean> {
-  try {
-    await chaiExpect(await this.shiftName.getText()).to.equal(shiftName)
-    await chaiExpect(await this.hoursFrom.getText()).to.equal(hoursFrom)
-    await chaiExpect(await this.hoursTo.getText()).to.equal(hoursTo)
-    return true
-  } catch (err) {
-    console.log(new Error('Field is not present on the page'))
-    return false
-  }
+): Promise<void> {
+  await page.shiftName.waitForDisplayed({ timeout: 3000 })
+  await page.shiftName.getText()
+
+  await page.hoursFrom.waitForDisplayed({ timeout: 3000 })
+  await page.hoursFrom.getText()
+
+  await page.hoursTo.waitForDisplayed({ timeout: 3000 })
+  await page.hoursTo.getText()
 }
 
-async function deleteShift(verifyText: string): Promise<boolean> {
-  try {
-    const checkBox = await this.getCheckBox(verifyText)
-    await checkBox.click()
-    await this.btnDelete.click()
-    await this.btnOk.click()
-    return true
-  } catch (err) {
-    return false
-  }
+export async function deleteShift(
+  page: WorkShiftPage,
+  verifyText: string
+): Promise<void> {
+  const checkBox = await page.getCheckBox(verifyText)
+  await checkBox.waitForClickable({ timeout: 2000 })
+  await checkBox.click()
+  await page.btnDelete.waitForClickable({ timeout: 2000 })
+  await page.btnDelete.click()
+  await page.btnOk.waitForClickable({ timeout: 2000 })
+  await page.btnOk.click()
 }
-
-const functions = {
-  logIn,
-  redirectToWorkShift,
-  addShift,
-  findShift,
-  deleteShift,
-}
-
-export default functions

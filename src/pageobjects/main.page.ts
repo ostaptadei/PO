@@ -1,5 +1,5 @@
 import { ChainablePromiseElement } from 'webdriverio'
-import functions from '../helpers/helper'
+import { redirectToWorkShift } from '..'
 import Page from './page'
 
 const mainPageLocators = {
@@ -8,7 +8,7 @@ const mainPageLocators = {
   workShiftTab: '#menu_admin_workShift',
 }
 
-class MainPage extends Page {
+export class MainPage extends Page {
   get adminTab(): ChainablePromiseElement<Promise<WebdriverIO.Element>> {
     return $(mainPageLocators.adminTab)
   }
@@ -21,9 +21,7 @@ class MainPage extends Page {
     return $(mainPageLocators.workShiftTab)
   }
 
-  async goToWorkShift(): Promise<boolean> {
-    return await functions.redirectToWorkShift.call(this)
+  async goToWorkShift(): Promise<void> {
+    return redirectToWorkShift(this)
   }
 }
-
-export default new MainPage()

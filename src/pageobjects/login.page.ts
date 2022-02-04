@@ -1,6 +1,6 @@
+import { use } from 'chai'
 import { ChainablePromiseElement } from 'webdriverio'
-
-import functions from '../helpers/helper'
+import { logIn } from '..'
 import Page from './page'
 
 const loginPageLocators = {
@@ -9,7 +9,7 @@ const loginPageLocators = {
   btnSubmit: '#btnLogin',
 }
 
-class LoginPage extends Page {
+export class LoginPage extends Page {
   get inputUsername(): ChainablePromiseElement<Promise<WebdriverIO.Element>> {
     return $(loginPageLocators.inputUsername)
   }
@@ -22,13 +22,11 @@ class LoginPage extends Page {
     return $(loginPageLocators.btnSubmit)
   }
 
-  async login(username: string, password: string): Promise<boolean> {
-    return await functions.logIn.call(this, username, password)
+  login(username: string, password: string): Promise<any> {
+    return logIn(this, username, password)
   }
 
-  open(): Promise<string> {
-    return super.open('index.php/auth/login')
+  async open(): Promise<void> {
+    super.open('index.php/auth/login')
   }
 }
-
-export default new LoginPage()

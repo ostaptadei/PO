@@ -1,6 +1,6 @@
 class Page {
-  async open(path: string): Promise<string> {
-    return browser.url(`${path}`)
+  async open(path: string): Promise<void> {
+    await browser.url(`${path}`)
   }
 }
 

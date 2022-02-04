@@ -1,7 +1,11 @@
-import { ChainablePromiseElement } from 'webdriverio'
-import functions from '../helpers/helper'
+import {
+  ChainablePromiseArray,
+  ChainablePromiseElement,
+  ElementArray,
+} from 'webdriverio'
 import Page from './page'
 import inputs from '../utils/inputs'
+import { addShift, deleteShift, findShift } from '..'
 
 const workShiftPageLocators = {
   employeesList: '.selectMany :nth-child(1)',
@@ -17,9 +21,11 @@ const workShiftPageLocators = {
   checkBox: `//a[text()='${inputs.shiftName}']/../../td/input`,
   btnDelete: `#btnDelete`,
   btnOk: `#dialogDeleteBtn`,
+  customerList: '#customerList',
+  shiftRows: 'tr',
 }
 
-class WorkShiftPage extends Page {
+export class WorkShiftPage extends Page {
   get employeesList(): ChainablePromiseElement<Promise<WebdriverIO.Element>> {
     return $(workShiftPageLocators.employeesList)
   }
@@ -72,25 +78,31 @@ class WorkShiftPage extends Page {
     return $(workShiftPageLocators.btnOk)
   }
 
+  get customerList(): ChainablePromiseElement<Promise<WebdriverIO.Element>> {
+    return $(workShiftPageLocators.customerList)
+  }
+
+  get shiftRows(): ChainablePromiseArray<ElementArray> {
+    return $$(workShiftPageLocators.shiftRows)
+  }
+
   async addNewShift(
     shiftName: string,
     hoursFrom: string,
     hoursTo: string
-  ): Promise<boolean> {
-    return await functions.addShift.call(this, shiftName, hoursFrom, hoursTo)
+  ): Promise<void> {
+    addShift(this, shiftName, hoursFrom, hoursTo)
   }
 
   async findNewShift(
     shiftName: string,
     hoursFrom: string,
     hoursTo: string
-  ): Promise<boolean> {
-    return await functions.findShift.call(this, shiftName, hoursFrom, hoursTo)
+  ): Promise<void> {
+    return findShift(this, shiftName, hoursFrom, hoursTo)
   }
 
-  async deleteNewShift(verifyText: string): Promise<boolean> {
-    return await functions.deleteShift.call(this, verifyText)
+  async deleteNewShift(verifyText: string): Promise<void> {
+    return deleteShift(this, verifyText)
   }
 }
-
-export default new WorkShiftPage()
