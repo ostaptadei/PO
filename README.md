@@ -2,7 +2,7 @@
 
 WebdriverIO, mocha and chai libraries need to be installed to run this project
 
-- To do that use console
+- To do that use
   - npm i chai
   - npm i mocha
 - To run test script enter in console "npx wdio run test/wdio.conf.ts"
